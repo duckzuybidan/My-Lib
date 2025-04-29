@@ -1,0 +1,1 @@
+export const self_description = "I am currently an undergraduate student at the University of Science, seeking an internship to gain more experience."
