@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import React, { createContext, useState, ReactNode, useMemo, use } from "react";
-
+import { motion, MotionProps } from "framer-motion";
 interface IDragDropContext {
   mode: "sort" | "swap";
 }
@@ -125,12 +125,31 @@ const DragDropZone: React.FC<IDragDropZoneProps> = ({
  * ```
  */
 const Item: React.FC<IItemProps> = ({ children, index, className, style }) => {
+  const dragVariants: MotionProps['variants'] = {
+    idle: {
+      rotate: 0,
+    },
+    dragging: {
+      rotate: [0, -2, 2, -2, 2, 0],
+      transition: {
+        repeat: Infinity,
+        duration: 0.6,
+        ease: "easeInOut",
+      },
+    },
+  };
   const { moveItem } = useDragDropBodyContext({
     errorMessage: "CustomDragDropZoneItem must be used within a CustomDragDropZone",
   });
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData("text/plain", index.toString());
+    setIsDragging(true);
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -143,19 +162,24 @@ const Item: React.FC<IItemProps> = ({ children, index, className, style }) => {
     if (!isNaN(fromIndex) && fromIndex !== index) {
       moveItem(fromIndex, index);
     }
+    setIsDragging(false);
   };
 
   return (
-    <div
+    <motion.div
+      layout
       draggable
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
+      onDragStartCapture={handleDragStart}
+      onDragEndCapture={handleDragEnd}
+      onDragOverCapture={handleDragOver}
+      onDropCapture={handleDrop}
+      variants={dragVariants}
+      animate={isDragging ? "dragging" : "idle"}
       className={cn("", className)}
       style={style}
     >
       {children}
-    </div>
+    </motion.div>
   );
 };
 /**
@@ -271,7 +295,7 @@ const Body: React.FC<IBodyProps> = ({ children, className, style }) => {
 
   return (
     <DragDropBodyContext.Provider value={{ moveItem }}>
-      <div className={cn("", className)} style={style}>
+      <motion.div layout className={cn("", className)} style={style}>
         {itemOrder.map((id, index) => {
           const element = itemMap.get(id);
           if (!element) return null;
@@ -281,7 +305,7 @@ const Body: React.FC<IBodyProps> = ({ children, className, style }) => {
             </React.Fragment>
           );
         })}
-      </div>
+      </motion.div>
     </DragDropBodyContext.Provider>
   );
 };

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { HTMLMotionProps, motion } from "framer-motion";
+import { HTMLMotionProps, motion, MotionProps } from "framer-motion";
 
 interface IExpandButtonProps extends HTMLMotionProps<"button"> {
   colorCode?: string;
@@ -42,7 +42,7 @@ const ExpandButton: React.FC<IExpandButtonProps> = ({
 }) => {
   const computedExpandWidth = expandWidth ?? idleWidth + 120;
 
-  const containerVariants = {
+  const containerVariants: MotionProps["variants"] = {
     idle: { width: idleWidth },
     hover: {
       width: computedExpandWidth,
@@ -54,7 +54,7 @@ const ExpandButton: React.FC<IExpandButtonProps> = ({
     },
   };
 
-  const bgVariants = {
+  const bgVariants: MotionProps["variants"] = {
     idle: { opacity: 0 },
     hover: {
       opacity: 1,
@@ -64,7 +64,7 @@ const ExpandButton: React.FC<IExpandButtonProps> = ({
     },
   };
 
-  const iconVariants = {
+  const iconVariants: MotionProps["variants"] = {
     idle: { scale: 1 },
     hover: {
       scale: 0,
@@ -74,7 +74,7 @@ const ExpandButton: React.FC<IExpandButtonProps> = ({
     },
   };
 
-  const textVariants = {
+  const textVariants: MotionProps["variants"] = {
     idle: {
       scale: 0,
       opacity: 0,

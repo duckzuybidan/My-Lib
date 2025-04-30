@@ -1,5 +1,5 @@
 import React from "react";
-import { HTMLMotionProps, motion } from "framer-motion";
+import { HTMLMotionProps, motion, MotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface IShutterButtonProps extends HTMLMotionProps<"button"> {
@@ -89,7 +89,7 @@ const ShutterButton: React.FC<IShutterButtonProps> = ({
 }) => {
   const orientation = mode.includes("horizontal") ? "horizontal" : "vertical";
   const direction = mode.includes("in") ? "in" : "out";
-  const overlayVariants = {
+  const overlayVariants: MotionProps["variants"] = {
     initial: {
       scaleX: orientation === "horizontal" ? 0 : 1,
       scaleY: orientation === "vertical" ? 0 : 1,
