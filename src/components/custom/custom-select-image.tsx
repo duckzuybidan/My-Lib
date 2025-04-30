@@ -78,28 +78,7 @@ const useSelectImageContext = ({ errorMessage }: { errorMessage: string }) => {
   return context;
 }
 
-/**
- * `SelectImage` is a component that allows the user to upload and crop an image. 
- * It provides context for managing the image's state, cropping behavior, zoom level, and file selection.
- * The component consists of two main containers: `ImageContainer` (for displaying the image and cropping controls)
- * and `EmptyContainer` (for displaying a button to trigger file selection).
- * 
- * @param {number} width - The width of the image container (both `ImageContainer` and `EmptyContainer`).
- * @param {number} height - The height of the image container (both `ImageContainer` and `EmptyContainer`).
- * @param {(imageSrc: string) => void} [onChange] - An optional callback function to handle the updated image source after cropping.
- * @param {React.ReactNode} [children] - Optional children to render inside the `SelectImage` component. 
- * The children can be `ImageContainer` or `EmptyContainer`.
- * 
- * @returns {JSX.Element} The `SelectImage` component that enables image selection and cropping functionality.
- * 
- * @example
- * ```tsx
- * <SelectImage width={500} height={500} onChange={(src) => console.log(src)}>
- *   <SelectImage.ImageContainer/>
- *   <SelectImage.EmptyContainer />
- * </SelectImage>
- * ```
- */
+
 const SelectImage: React.FC<ISelectImageProps> = ({ width, height, onChange, children }) => {
   const [imageContainer, setImageContainer] = useState(React.Children.toArray(children).find(
     (child) => React.isValidElement(child) && child.type === ImageContainer
@@ -269,6 +248,28 @@ const EmptyContainer: React.FC<IEmptyContainer> = ({ className, style }) => {
     </div>
   );
 }
+/**
+ * `SelectImage` is a component that allows the user to upload and crop an image. 
+ * It provides context for managing the image's state, cropping behavior, zoom level, and file selection.
+ * The component consists of two main containers: `ImageContainer` (for displaying the image and cropping controls)
+ * and `EmptyContainer` (for displaying a button to trigger file selection).
+ * 
+ * @param {number} width - The width of the image container (both `ImageContainer` and `EmptyContainer`).
+ * @param {number} height - The height of the image container (both `ImageContainer` and `EmptyContainer`).
+ * @param {(imageSrc: string) => void} [onChange] - An optional callback function to handle the updated image source after cropping.
+ * @param {React.ReactNode} [children] - Optional children to render inside the `SelectImage` component. 
+ * The children can be `ImageContainer` or `EmptyContainer`.
+ * 
+ * @returns {JSX.Element} The `SelectImage` component that enables image selection and cropping functionality.
+ * 
+ * @example
+ * ```tsx
+ * <SelectImage width={500} height={500} onChange={(src) => console.log(src)}>
+ *   <SelectImage.ImageContainer/>
+ *   <SelectImage.EmptyContainer />
+ * </SelectImage>
+ * ```
+ */
 const CustomSelectImage = SelectImage as ISelectImageComponent;
 CustomSelectImage.ImageContainer = ImageContainer;
 CustomSelectImage.EmptyContainer = EmptyContainer;
