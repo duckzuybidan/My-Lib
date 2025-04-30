@@ -77,6 +77,29 @@ const useSelectImageContext = ({ errorMessage }: { errorMessage: string }) => {
   }
   return context;
 }
+
+/**
+ * `SelectImage` is a component that allows the user to upload and crop an image. 
+ * It provides context for managing the image's state, cropping behavior, zoom level, and file selection.
+ * The component consists of two main containers: `ImageContainer` (for displaying the image and cropping controls)
+ * and `EmptyContainer` (for displaying a button to trigger file selection).
+ * 
+ * @param {number} width - The width of the image container (both `ImageContainer` and `EmptyContainer`).
+ * @param {number} height - The height of the image container (both `ImageContainer` and `EmptyContainer`).
+ * @param {(imageSrc: string) => void} [onChange] - An optional callback function to handle the updated image source after cropping.
+ * @param {React.ReactNode} [children] - Optional children to render inside the `SelectImage` component. 
+ * The children can be `ImageContainer` or `EmptyContainer`.
+ * 
+ * @returns {JSX.Element} The `SelectImage` component that enables image selection and cropping functionality.
+ * 
+ * @example
+ * ```tsx
+ * <SelectImage width={500} height={500} onChange={(src) => console.log(src)}>
+ *   <SelectImage.ImageContainer/>
+ *   <SelectImage.EmptyContainer />
+ * </SelectImage>
+ * ```
+ */
 const SelectImage: React.FC<ISelectImageProps> = ({ width, height, onChange, children }) => {
   const [imageContainer, setImageContainer] = useState(React.Children.toArray(children).find(
     (child) => React.isValidElement(child) && child.type === ImageContainer
@@ -163,8 +186,16 @@ const SelectImage: React.FC<ISelectImageProps> = ({ width, height, onChange, chi
   )
 }
 
-
-
+/**
+ * `ImageContainer` is used within the `SelectImage` component to display the selected image and provides cropping controls. 
+ * It utilizes `react-easy-crop` to enable users to crop the image, adjust the zoom, and reposition the crop area.
+ * 
+ * @param {string} [className] - Optional class name to apply custom styles to the container.
+ * @param {React.CSSProperties} [style] - Optional inline styles to apply to the container.
+ * 
+ * @returns {JSX.Element} The `ImageContainer` component that displays the image along with crop and zoom functionality.
+ * 
+ */
 const ImageContainer: React.FC<IImageContainer> = ({ className, style }) => {
   const {
     imageSrc,
@@ -214,6 +245,16 @@ const ImageContainer: React.FC<IImageContainer> = ({ className, style }) => {
   );
 }
 
+/**
+ * `EmptyContainer` is used within the `SelectImage` component to provide a clickable area 
+ * that allows users to trigger a file selection dialog for uploading an image. 
+ * It is shown when no image has been selected.
+ * 
+ * @param {string} [className] - Optional class name to apply custom styles to the container.
+ * @param {React.CSSProperties} [style] - Optional inline styles to apply to the container.
+ * 
+ * @returns {JSX.Element} The `EmptyContainer` component that allows users to upload an image.
+ */
 const EmptyContainer: React.FC<IEmptyContainer> = ({ className, style }) => {
   const { triggerFileSelect } = useSelectImageContext(
     { errorMessage: "EmptyContainer must be used within a CustomSelectImage" }
