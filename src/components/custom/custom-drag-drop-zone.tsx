@@ -65,6 +65,7 @@ const useDragDropBodyContext = ({ errorMessage }: { errorMessage: string }): IDr
   return context;
 };
 
+
 const DragDropZone: React.FC<IDragDropZoneProps> = ({
   children,
   mode = "sort",
@@ -103,7 +104,26 @@ const DragDropZone: React.FC<IDragDropZoneProps> = ({
     </DragDropContext.Provider>
   );
 };
-
+/**
+ * `Item` represents an individual draggable item within the `DragDropZone.Body`. 
+ * It is rendered within the `Body` component and provides drag-and-drop functionality, allowing the item to be moved 
+ * or swapped based on the selected mode ("sort" or "swap").
+ *
+ * @param {React.ReactNode} [children] - The content to be displayed inside the item.
+ * @param {number} index - The index of the item within the `Body` component, used to track the item's position.
+ * @param {string} [className] - Optional class name for custom styling.
+ * @param {React.CSSProperties} [style] - Optional inline styles to customize the appearance of the item.
+ * 
+ * @returns {JSX.Element} The `Item` component that represents an individual draggable item.
+ * 
+ * @example
+ * ```tsx
+ * <DragDropZone.Body>
+ *   <DragDropZone.Body.Item index={0}>Item 1</DragDropZone.Body.Item>
+ *   <DragDropZone.Body.Item index={1}>Item 2</DragDropZone.Body.Item>
+ * </DragDropZone.Body>
+ * ```
+ */
 const Item: React.FC<IItemProps> = ({ children, index, className, style }) => {
   const { moveItem } = useDragDropBodyContext({
     errorMessage: "CustomDragDropZoneItem must be used within a CustomDragDropZone",
@@ -138,7 +158,23 @@ const Item: React.FC<IItemProps> = ({ children, index, className, style }) => {
     </div>
   );
 };
-
+/**
+ * `Header` is a component within the `DragDropZone` that represents the header section of the drag-and-drop zone.
+ * It can contain any content, such as titles, buttons, or other elements, and is displayed at the top of the `DragDropZone`.
+ *
+ * @param {React.ReactNode} children - The content to be rendered inside the header.
+ * @param {string} [className] - Optional class name for custom styling.
+ * @param {React.CSSProperties} [style] - Optional inline styles to customize the appearance of the header.
+ * 
+ * @returns {JSX.Element} The `Header` component that will be rendered at the top of the `DragDropZone`.
+ * 
+ * @example
+ * ```tsx
+ * <DragDropZone.Header>
+ *   <h2>My Custom Header</h2>
+ * </DragDropZone.Header>
+ * ```
+ */
 const Header: React.FC<IHeaderProps> = ({ children, className, style }) => {
   useDragDropContext({
     errorMessage: "CustomDragDropZoneHeader must be used within a CustomDragDropZone",
@@ -149,7 +185,23 @@ const Header: React.FC<IHeaderProps> = ({ children, className, style }) => {
     </div>
   );
 };
-
+/**
+ * `Footer` is a component within the `DragDropZone` that represents the footer section of the drag-and-drop zone.
+ * It can contain any content, such as buttons, links, or other elements, and is displayed at the bottom of the `DragDropZone`.
+ *
+ * @param {React.ReactNode} children - The content to be rendered inside the footer.
+ * @param {string} [className] - Optional class name for custom styling.
+ * @param {React.CSSProperties} [style] - Optional inline styles to customize the appearance of the footer.
+ * 
+ * @returns {JSX.Element} The `Footer` component that will be rendered at the bottom of the `DragDropZone`.
+ * 
+ * @example
+ * ```tsx
+ * <DragDropZone.Footer>
+ *   <button>Footer Button</button>
+ * </DragDropZone.Footer>
+ * ```
+ */
 const Footer: React.FC<IFooterProps> = ({ children, className, style }) => {
   useDragDropContext({
     errorMessage: "CustomDragDropZoneFooter must be used within a CustomDragDropZone",
@@ -162,7 +214,24 @@ const Footer: React.FC<IFooterProps> = ({ children, className, style }) => {
 };
 
 
-
+/**
+ * `Body` is the main content area within the `DragDropZone` that contains the draggable items. 
+ * It provides the drag-and-drop functionality for sorting or swapping items based on the `mode` set in the `DragDropZone`.
+ *
+ * @param {React.ReactNode} children - The content (draggable items) to be rendered inside the body.
+ * @param {string} [className] - Optional class name for custom styling.
+ * @param {React.CSSProperties} [style] - Optional inline styles to customize the appearance of the body.
+ * 
+ * @returns {JSX.Element} The `Body` component that will render the draggable items and manage their order.
+ * 
+ * @example
+ * ```tsx
+ * <DragDropZone.Body>
+ *   <DragDropZone.Body.Item index={0}>Item 1</DragDropZone.Body.Item>
+ *   <DragDropZone.Body.Item index={1}>Item 2</DragDropZone.Body.Item>
+ * </DragDropZone.Body>
+ * ```
+ */
 const Body: React.FC<IBodyProps> = ({ children, className, style }) => {
   const { mode } = useDragDropContext({
     errorMessage: "CustomDragDropZoneBody must be used within a CustomDragDropZone",
@@ -218,9 +287,38 @@ const Body: React.FC<IBodyProps> = ({ children, className, style }) => {
 };
 const BodyWithItem = Body as IBodyComponent;
 BodyWithItem.Item = Item;
+/**
+ * `DragDropZone` is a container component that provides drag-and-drop functionality.
+ * It accepts `Header`, `Body`, and `Footer` components and enables items within the `Body` to be dragged and dropped.
+ * The mode of the drag-and-drop operation can be either "sort" (for reordering items) or "swap" (for swapping items).
+ *
+ * @param {React.ReactNode} children - The content to be rendered inside the `DragDropZone`, which can include `Header`, `Body`, and `Footer`.
+ * @param {("sort" | "swap")} [mode="sort"] - The mode for drag-and-drop behavior. "sort" allows items to be reordered, while "swap" swaps the positions of two items.
+ * @param {string} [className] - An optional class name for custom styling.
+ * @param {React.CSSProperties} [style] - Optional inline styles to customize the appearance of the `DragDropZone`.
+ * 
+ * @returns {JSX.Element} The `DragDropZone` component that wraps the `Header`, `Body`, and `Footer` components and provides drag-and-drop functionality.
+ * 
+ * @example
+ * ```tsx
+ * <DragDropZone mode="swap" className="custom-class">
+ *   <DragDropZone.Header>
+ *     <h2>Header Content</h2>
+ *   </DragDropZone.Header>
+ *   <DragDropZone.Body>
+ *     <DragDropZone.Body.Item index={0}>Item 1</DragDropZone.Body.Item>
+ *     <DragDropZone.Body.Item index={1}>Item 2</DragDropZone.Body.Item>
+ *   </DragDropZone.Body>
+ *   <DragDropZone.Footer>
+ *     <button>Footer Button</button>
+ *   </DragDropZone.Footer>
+ * </DragDropZone>
+ * ```
+ */
 const CustomDragDropZone = DragDropZone as IDragDropZoneComponent;
 CustomDragDropZone.Header = Header;
 CustomDragDropZone.Body = BodyWithItem;
 CustomDragDropZone.Footer = Footer;
+
 
 export default CustomDragDropZone;

@@ -8,6 +8,19 @@ interface ITranslateTextProps {
   type?: "vertical" | "horizontal"
   body: { text: string, className?: string, style?: React.CSSProperties }[]
 }
+/**
+ * `TranslateText` is a component that animates an array of text chunks using
+ * Framer Motion. You can choose between vertical or horizontal animation direction.
+ *
+ * @param {Object} props - Component props
+ * @param {string} [props.containerClassName] - Optional Tailwind or custom class names for the outer container.
+ * @param {React.CSSProperties} [props.containerstyle] - Optional inline styles for the outer container.
+ * @param {"vertical" | "horizontal"} [props.type="vertical"] - Animation direction: `"vertical"` for upward movement or `"horizontal"` for sideways movement.
+ * @param {Array} props.body - Array of text chunks to animate. Each chunk contains:
+ * @param {string} props.body[].text - The text to display.
+ * @param {string} [props.body[].className] - Optional class name for individual text chunks.
+ * @param {React.CSSProperties} [props.body[].style] - Optional inline styles for individual text chunks.
+ */
 const TranslateText: React.FC<ITranslateTextProps> = ({ containerClassName, containerstyle, body, type = "vertical" }) => {
   const sentence = {
     hidden: {},
