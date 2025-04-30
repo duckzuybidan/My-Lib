@@ -33,6 +33,18 @@ const variants: MotionProps['variants'] = {
     backgroundPosition: "0% 50%",
   }
 };
+/**
+ * `WaveGradientBackground` is a background component that animates a wave-like gradient 
+ * effect across its background. The background will transition in a loop with multiple
+ * background position shifts, creating a dynamic wave effect. This component can be used 
+ * as a container with optional children.
+ *
+ * @param {React.ReactNode} [props.children] - Optional children to be rendered inside the background.
+ * @param {string} [props.className] - Optional additional class names to customize the container's appearance.
+ * @param {React.CSSProperties} [props.style] - Optional inline styles to further customize the container.
+ * 
+ * @returns {JSX.Element} The animated wave gradient background component.
+ */
 const WaveGradientBackground: React.FC<IWaveGradientBackgroundProps> = ({ children, className, style }) => {
   return (
     <motion.div
