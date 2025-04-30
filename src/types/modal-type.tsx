@@ -3,12 +3,12 @@ export interface IGenericModalData {
   title: string;
   description?: string;
 }
-export interface IDeleteModalData extends IGenericModalData {}
+export interface IDeleteModalData extends IGenericModalData { }
 export interface IModalData {
   "DELETE": IDeleteModalData
   "": null;
 }
-export interface ISubmitDeleteData {}
+export interface ISubmitDeleteData { }
 export interface ISubmitData {
   "DELETE": ISubmitDeleteData
 }

@@ -6,9 +6,9 @@ interface ITranslateTextProps {
   containerClassName?: string
   containerstyle?: React.CSSProperties
   type?: "vertical" | "horizontal"
-  body: {text: string, className?: string, style?: React.CSSProperties}[]
+  body: { text: string, className?: string, style?: React.CSSProperties }[]
 }
-const TranslateText: React.FC<ITranslateTextProps> = ({containerClassName, containerstyle, body, type = "vertical"}) => {
+const TranslateText: React.FC<ITranslateTextProps> = ({ containerClassName, containerstyle, body, type = "vertical" }) => {
   const sentence = {
     hidden: {},
     visible: {
@@ -17,7 +17,7 @@ const TranslateText: React.FC<ITranslateTextProps> = ({containerClassName, conta
       },
     },
   };
-  
+
   const verticalTranslate = {
     hidden: {
       y: 0,
@@ -50,11 +50,11 @@ const TranslateText: React.FC<ITranslateTextProps> = ({containerClassName, conta
   };
   return (
     <motion.div
-    className={cn("", containerClassName)}
-    style={{
-      ...containerstyle
-    }}
-    variants={sentence}
+      className={cn("", containerClassName)}
+      style={{
+        ...containerstyle
+      }}
+      variants={sentence}
       initial="hidden"
       animate="visible"
     >

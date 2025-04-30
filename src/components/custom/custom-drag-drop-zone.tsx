@@ -169,11 +169,11 @@ const Body: React.FC<IBodyProps> = ({ children, className, style }) => {
   });
 
   const initialItems: IItemData[] = (React.Children.toArray(children)
-  .filter((child): child is React.ReactElement => React.isValidElement(child) && child.type === Item)
-  .map((child) => ({
-    id: (child.key ?? crypto.randomUUID()).toString(),
-    element: child,
-  })));
+    .filter((child): child is React.ReactElement => React.isValidElement(child) && child.type === Item)
+    .map((child) => ({
+      id: (child.key ?? crypto.randomUUID()).toString(),
+      element: child,
+    })));
 
   const [itemOrder, setItemOrder] = useState<string[]>(initialItems.map((item) => item.id));
 

@@ -8,8 +8,8 @@ interface ICustomSelectImageContext {
   height: number
   imageSrc: string | undefined
   setImageSrc: (imageSrc: string) => void
-  crop: {x: number, y: number}
-  setCrop: (crop: {x: number, y: number}) => void
+  crop: { x: number, y: number }
+  setCrop: (crop: { x: number, y: number }) => void
   zoom: number
   setZoom: (zoom: number) => void
   handleCropComplete: (croppedArea: IArea, croppedAreaPixels: IArea) => void
@@ -37,13 +37,13 @@ interface IContainer {
   className?: string
   style?: React.CSSProperties
 }
-interface IImageContainer extends IContainer {}
-interface IEmptyContainer extends IContainer {}
+interface IImageContainer extends IContainer { }
+interface IEmptyContainer extends IContainer { }
 const getCroppedImg = async (imageSrc: string, pixelCrop: IArea, zoom: number): Promise<string> => {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.src = imageSrc;
-    image.crossOrigin = "anonymous"; 
+    image.crossOrigin = "anonymous";
     image.onload = () => {
       const canvas = document.createElement("canvas");
       canvas.width = pixelCrop.width;
@@ -57,27 +57,27 @@ const getCroppedImg = async (imageSrc: string, pixelCrop: IArea, zoom: number): 
       canvas.height = pixelCrop.height * zoom;
 
       ctx.drawImage(
-        image,          
-        pixelCrop.x, pixelCrop.y,   
-        pixelCrop.width, pixelCrop.height, 
-        0, 0, 
-        pixelCrop.width * zoom, pixelCrop.height * zoom 
+        image,
+        pixelCrop.x, pixelCrop.y,
+        pixelCrop.width, pixelCrop.height,
+        0, 0,
+        pixelCrop.width * zoom, pixelCrop.height * zoom
       );
-      const dataUrl = canvas.toDataURL("image/jpeg"); 
+      const dataUrl = canvas.toDataURL("image/jpeg");
       resolve(dataUrl);
     };
     image.onerror = (error) => reject(error);
   });
 }
 const SelectImageContext = React.createContext<ICustomSelectImageContext | null>(null);
-const useSelectImageContext = ({errorMessage} : {errorMessage: string}) => {
+const useSelectImageContext = ({ errorMessage }: { errorMessage: string }) => {
   const context = React.useContext(SelectImageContext);
   if (!context) {
     throw new Error(errorMessage);
   }
   return context;
 }
-const SelectImage : React.FC<ISelectImageProps> = ({ width, height, onChange, children}) => {
+const SelectImage: React.FC<ISelectImageProps> = ({ width, height, onChange, children }) => {
   const [imageContainer, setImageContainer] = useState(React.Children.toArray(children).find(
     (child) => React.isValidElement(child) && child.type === ImageContainer
   ) || null);
@@ -155,7 +155,7 @@ const SelectImage : React.FC<ISelectImageProps> = ({ width, height, onChange, ch
         />
         {imageSrc ? (
           <>{imageContainer}</>
-        ): (
+        ) : (
           <>{emptyContainer}</>
         )}
       </div>
@@ -165,46 +165,46 @@ const SelectImage : React.FC<ISelectImageProps> = ({ width, height, onChange, ch
 
 
 
-const ImageContainer : React.FC<IImageContainer> = ({className, style}) => {
-  const { 
-    imageSrc, 
-    crop, 
-    zoom, 
-    setCrop, 
-    setZoom, 
-    width, 
+const ImageContainer: React.FC<IImageContainer> = ({ className, style }) => {
+  const {
+    imageSrc,
+    crop,
+    zoom,
+    setCrop,
+    setZoom,
+    width,
     height,
-    handleCropComplete, 
+    handleCropComplete,
     handleCrop,
     triggerFileSelect
   } = useSelectImageContext(
-    {errorMessage: "ImageContainer must be used within a CustomSelectImage"}
+    { errorMessage: "ImageContainer must be used within a CustomSelectImage" }
   );
   return (
-    <div 
-      className={cn("relative overflow-hidden w-full h-full border-none", className)} 
+    <div
+      className={cn("relative overflow-hidden w-full h-full border-none", className)}
       style={style}
-    >  
-      <Cropper 
-        image={imageSrc} 
-        crop={crop} 
-        zoom={zoom} 
-        onCropComplete={handleCropComplete} 
-        onCropChange={setCrop} 
-        onZoomChange={setZoom} 
+    >
+      <Cropper
+        image={imageSrc}
+        crop={crop}
+        zoom={zoom}
+        onCropComplete={handleCropComplete}
+        onCropChange={setCrop}
+        onZoomChange={setZoom}
         cropSize={{
           width: width,
           height: height
-        }} 
+        }}
       />
-      <div 
-        className='absolute top-2 right-2 cursor-pointer bg-white/50 p-1 rounded-full hover:bg-white' 
+      <div
+        className='absolute top-2 right-2 cursor-pointer bg-white/50 p-1 rounded-full hover:bg-white'
         onClick={triggerFileSelect}
       >
         <Pencil size={12} className='text-black' />
       </div>
-      <div 
-        className='absolute top-1/2 left-1/2 cursor-pointer bg-white/50 p-1 rounded-full hover:bg-white' 
+      <div
+        className='absolute top-1/2 left-1/2 cursor-pointer bg-white/50 p-1 rounded-full hover:bg-white'
         onClick={handleCrop}
         onMouseDown={(e => e.preventDefault())}
       >
@@ -213,15 +213,15 @@ const ImageContainer : React.FC<IImageContainer> = ({className, style}) => {
     </div>
   );
 }
-  
-const EmptyContainer : React.FC<IEmptyContainer> = ({className, style}) => {
+
+const EmptyContainer: React.FC<IEmptyContainer> = ({ className, style }) => {
   const { triggerFileSelect } = useSelectImageContext(
-    {errorMessage: "EmptyContainer must be used within a CustomSelectImage"}
+    { errorMessage: "EmptyContainer must be used within a CustomSelectImage" }
   );
   return (
-    <div 
-      onClick={triggerFileSelect} 
-      className={cn('w-full h-full flex items-center justify-center cursor-pointer border-2 border-dashed border-gray-300', className)} 
+    <div
+      onClick={triggerFileSelect}
+      className={cn('w-full h-full flex items-center justify-center cursor-pointer border-2 border-dashed border-gray-300', className)}
       style={style}
     >
       <ImageUp />

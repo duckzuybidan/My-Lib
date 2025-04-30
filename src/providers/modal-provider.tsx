@@ -7,7 +7,7 @@ const ModalProvider = () => {
     isOpen,
     type
   } = useModal()
-  if(!isOpen){
+  if (!isOpen) {
     return null
   }
   return (

@@ -3,9 +3,9 @@ import React from 'react';
 import { motion, MotionProps } from 'framer-motion';
 import { cn } from '@/lib/utils';
 interface IBlopProps {
-    children?: React.ReactNode
-    className?: string
-    style?: React.CSSProperties
+  children?: React.ReactNode
+  className?: string
+  style?: React.CSSProperties
 }
 const variants: MotionProps['variants'] = {
   animate: {
@@ -18,17 +18,17 @@ const variants: MotionProps['variants'] = {
     }
   },
 }
-const Blop: React.FC<IBlopProps> = ({children, className, style}) => {
+const Blop: React.FC<IBlopProps> = ({ children, className, style }) => {
   return (
     <motion.div
-        className={cn("blop shadow-xl", className)}
-        style={{
-          ...style
-        }}
-        variants={variants}
-        animate="animate"
+      className={cn("blop shadow-xl", className)}
+      style={{
+        ...style
+      }}
+      variants={variants}
+      animate="animate"
     >
-        {children}
+      {children}
     </motion.div>
   );
 };
