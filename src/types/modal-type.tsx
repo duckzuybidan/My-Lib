@@ -1,13 +1,13 @@
 import { Area, Point } from "react-easy-crop";
 
-export type ModalType = "DELETE" | "EDIT_IMAGE" | "";
+export type ModalType = keyof IModalData;
 interface IGenericModalData {
   title: string;
   description?: string;
 }
 interface IDeleteModalData extends IGenericModalData { }
 interface IEditImageModalData extends IGenericModalData {
-  imageSrc: string;
+  imageSrc: string | undefined;
   width: number;
   height: number;
   shape: "rect" | "round";
@@ -26,9 +26,9 @@ export interface IModalData {
 export interface IModalState {
   isOpen: boolean;
   type: ModalType;
-  data: IModalData[ModalType]
+  data: IModalData[ModalType];
   onSubmit: () => void;
-  openModal: (payload: { type: ModalType; data: IModalData[ModalType]; onSubmit: () => void }) => void;
-  setData: (payload: { data: IModalData[ModalType] }) => void;
+  openModal: <K extends ModalType>(payload: { type: K; data: IModalData[K]; onSubmit: () => void }) => void;
+  setData: <K extends ModalType>(payload: { data: IModalData[K] }) => void;
   closeModal: () => void;
 };

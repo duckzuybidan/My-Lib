@@ -203,7 +203,7 @@ const ImageContainer: React.FC<IImageContainer> = ({ className, style }) => {
   const { openModal, closeModal } = useModal();
   const handleCropButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    openModal({
+    openModal<"EDIT_IMAGE">({
       type: "EDIT_IMAGE",
       data: {
         title: "Edit Image",

@@ -23,14 +23,14 @@ import { create } from "zustand";
  * const { isOpen, openModal, closeModal, type, data, onSubmit, setData } = useModal();
  * 
  * // To open the modal
- * openModal({
+ * openModal<'DELETE'>({
  *   type: 'DELETE',
  *   data: { title: 'Delete Item', description: 'Are you sure you want to delete this item?' },
  *   onSubmit: (data) => { console.log('Item deleted:', data); },
  * });
  * 
  * // To update the modal data without changing the modal type
- * setData({ data: { title: 'Update Item', description: 'Are you sure you want to update this item?' } });
+ * setData<'UPDATE'>({ data: { title: 'Update Item', description: 'Are you sure you want to update this item?' } });
  * 
  * // To close the modal
  * closeModal();
