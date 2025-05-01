@@ -200,10 +200,10 @@ const ImageContainer: React.FC<IImageContainer> = ({ className, style }) => {
   } = useSelectImageContext(
     { errorMessage: "ImageContainer must be used within a CustomSelectImage" }
   );
-  const { openModal, closeModal } = useModal();
+  const { openModal, closeModal } = useModal<"EDIT_IMAGE">();
   const handleCropButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    openModal<"EDIT_IMAGE">({
+    openModal({
       type: "EDIT_IMAGE",
       data: {
         title: "Edit Image",

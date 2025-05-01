@@ -1,10 +1,9 @@
 import useModal from "@/hooks/useModal"
-import { IModalData } from "@/types/modal-type"
 import TemplateModal from "./template-modal"
 import Cropper, { Area, Point } from "react-easy-crop"
 
 const EditImageModal = () => {
-  const { data, setData } = useModal() as { data: IModalData["EDIT_IMAGE"], setData: (payload: { data: IModalData["EDIT_IMAGE"] }) => void }
+  const { data, setData } = useModal<"EDIT_IMAGE">()
   const { imageSrc, crop, zoom, onCropChange, onZoomChange, onCropComplete, width, height, shape } = data
   const handleCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => onCropComplete(croppedArea, croppedAreaPixels)
   const handleCropChange = (crop: Point) => {
