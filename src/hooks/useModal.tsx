@@ -16,10 +16,11 @@ import { create } from "zustand";
  * The store exposes the following actions:
  * - `openModal`: Opens the modal, sets its type, data, and submission handler.
  * - `closeModal`: Closes the modal and resets the state.
+ * - `setData`: Updates the modal data without changing the modal type.
  * 
  * Example usage:
  * ```tsx
- * const { isOpen, openModal, closeModal, type, data, onSubmit } = useModal();
+ * const { isOpen, openModal, closeModal, type, data, onSubmit, setData } = useModal();
  * 
  * // To open the modal
  * openModal({
@@ -28,6 +29,9 @@ import { create } from "zustand";
  *   onSubmit: (data) => { console.log('Item deleted:', data); },
  * });
  * 
+ * // To update the modal data without changing the modal type
+ * setData({ data: { title: 'Update Item', description: 'Are you sure you want to update this item?' } });
+ * 
  * // To close the modal
  * closeModal();
  * ```
@@ -35,7 +39,7 @@ import { create } from "zustand";
 const useModal = create<IModalState>((set) => ({
   isOpen: false,
   type: "",
-  data: null,
+  data: undefined,
   onSubmit: () => { },
   openModal: ({ type, data, onSubmit }) =>
     set({
@@ -44,11 +48,12 @@ const useModal = create<IModalState>((set) => ({
       data,
       onSubmit,
     }),
+  setData: ({ data }) => set((state) => ({ ...state, data })),
   closeModal: () =>
     set({
       isOpen: false,
       type: "",
-      data: null,
+      data: undefined,
       onSubmit: () => { },
     }),
 }));

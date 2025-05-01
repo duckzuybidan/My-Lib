@@ -120,14 +120,14 @@ const ShutterButton: React.FC<IShutterButtonProps> = ({
         style={{ background: bgColorCode }}
         className={`absolute ${generateClassName(orientation, direction, true)}`}
       />
-      <div className="relative z-10 flex items-center gap-2">
-        {icon}
+      <div className="relative z-10 flex justify-center items-center gap-2">
         <span
           className={cn("", textClassName)}
           style={textStyle}
         >
           {text}
         </span>
+        {icon}
       </div>
     </motion.button>
   );
