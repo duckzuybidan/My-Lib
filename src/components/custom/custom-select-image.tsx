@@ -235,7 +235,7 @@ const ImageContainer: React.FC<IImageContainer> = ({ className, style }) => {
         alt="Selected Image"
       />
       <div
-        className='absolute top-[50%] left-[50%] cursor-pointer bg-white/50 p-1 rounded-full hover:bg-white'
+        className='absolute top-[calc(50%-8px)] left-[calc(50%-8px)] cursor-pointer bg-white/50 p-1 rounded-full hover:bg-white'
         onClick={handleCropButtonClick}
       >
         <Crop size={12} className='text-black' />
