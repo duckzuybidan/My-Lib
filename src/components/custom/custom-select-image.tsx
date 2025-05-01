@@ -1,24 +1,26 @@
 
-import { Check, ImageUp, Pencil } from 'lucide-react';
+import { Crop, ImageUp } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react'
-import Cropper from "react-easy-crop";
+import { Area, Point } from "react-easy-crop";
 import { cn } from '@/lib/utils';
+import useModal from '@/hooks/useModal';
 interface ICustomSelectImageContext {
   width: number
   height: number
+  shape: "rect" | "round"
   imageSrc: string | undefined
-  setImageSrc: (imageSrc: string) => void
-  crop: { x: number, y: number }
-  setCrop: (crop: { x: number, y: number }) => void
+  crop: Point
+  setCrop: (crop: Point) => void
   zoom: number
   setZoom: (zoom: number) => void
-  handleCropComplete: (croppedArea: IArea, croppedAreaPixels: IArea) => void
-  handleCrop: () => void
+  handleCropComplete: (croppedArea: Area, croppedAreaPixels: Area) => void
+  handleCrop: () => Promise<void>
   triggerFileSelect: () => void
 }
 interface ISelectImageProps {
   width: number
   height: number
+  shape?: "rect" | "round"
   onChange?: (imageSrc: string) => void
   children?: React.ReactNode
 }
@@ -27,19 +29,13 @@ interface ISelectImageComponent extends React.FC<ISelectImageProps> {
   EmptyContainer: React.FC<IEmptyContainer>;
 }
 
-interface IArea {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
 interface IContainer {
   className?: string
   style?: React.CSSProperties
 }
 interface IImageContainer extends IContainer { }
 interface IEmptyContainer extends IContainer { }
-const getCroppedImg = async (imageSrc: string, pixelCrop: IArea, zoom: number): Promise<string> => {
+const getCroppedImg = async (imageSrc: string, pixelCrop: Area): Promise<string> => {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.src = imageSrc;
@@ -53,15 +49,23 @@ const getCroppedImg = async (imageSrc: string, pixelCrop: IArea, zoom: number): 
         reject(new Error("Canvas is empty"));
         return;
       }
-      canvas.width = pixelCrop.width * zoom;
-      canvas.height = pixelCrop.height * zoom;
+      canvas.width = pixelCrop.width;
+      canvas.height = pixelCrop.height;
 
+      // Clear to transparent background
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw image portion within the crop area
       ctx.drawImage(
         image,
-        pixelCrop.x, pixelCrop.y,
-        pixelCrop.width, pixelCrop.height,
-        0, 0,
-        pixelCrop.width * zoom, pixelCrop.height * zoom
+        pixelCrop.x,
+        pixelCrop.y,
+        pixelCrop.width,
+        pixelCrop.height,
+        0,
+        0,
+        pixelCrop.width,
+        pixelCrop.height,
       );
       const dataUrl = canvas.toDataURL("image/jpeg");
       resolve(dataUrl);
@@ -79,7 +83,7 @@ const useSelectImageContext = ({ errorMessage }: { errorMessage: string }) => {
 }
 
 
-const SelectImage: React.FC<ISelectImageProps> = ({ width, height, onChange, children }) => {
+const SelectImage: React.FC<ISelectImageProps> = ({ width, height, shape = "rect", onChange, children }) => {
   const [imageContainer, setImageContainer] = useState(React.Children.toArray(children).find(
     (child) => React.isValidElement(child) && child.type === ImageContainer
   ) || null);
@@ -87,8 +91,8 @@ const SelectImage: React.FC<ISelectImageProps> = ({ width, height, onChange, chi
     (child) => React.isValidElement(child) && child.type === EmptyContainer
   ) || null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const croppedAreaPixelsRef = useRef<Area | null>(null);
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<IArea | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const triggerFileSelect = () => {
@@ -106,13 +110,18 @@ const SelectImage: React.FC<ISelectImageProps> = ({ width, height, onChange, chi
       reader.readAsDataURL(file);
     }
   }
-  const handleCropComplete = (_: IArea, croppedAreaPixels: IArea) => {
-    setCroppedAreaPixels(croppedAreaPixels);
+  const handleCropComplete = (_: Area, croppedAreaPixels: Area) => {
+    croppedAreaPixelsRef.current = croppedAreaPixels;
   }
   const handleCrop = async () => {
+    if (!croppedAreaPixelsRef.current || !imageSrc) {
+      console.error("No cropped area or image source");
+      return;
+    }
     try {
-      const croppedImage = await getCroppedImg(imageSrc!, croppedAreaPixels!, zoom);
+      const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixelsRef.current);
       if (croppedImage) {
+        setImageSrc(croppedImage);
         onChange?.(croppedImage);
       }
     } catch (error) {
@@ -130,8 +139,8 @@ const SelectImage: React.FC<ISelectImageProps> = ({ width, height, onChange, chi
   const value = {
     width,
     height,
+    shape,
     imageSrc,
-    setImageSrc,
     crop,
     setCrop,
     zoom,
@@ -177,6 +186,7 @@ const SelectImage: React.FC<ISelectImageProps> = ({ width, height, onChange, chi
  */
 const ImageContainer: React.FC<IImageContainer> = ({ className, style }) => {
   const {
+    shape,
     imageSrc,
     crop,
     zoom,
@@ -190,35 +200,45 @@ const ImageContainer: React.FC<IImageContainer> = ({ className, style }) => {
   } = useSelectImageContext(
     { errorMessage: "ImageContainer must be used within a CustomSelectImage" }
   );
+  const { openModal, closeModal } = useModal();
+  const handleCropButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    openModal({
+      type: "EDIT_IMAGE",
+      data: {
+        title: "Edit Image",
+        imageSrc,
+        shape,
+        crop,
+        zoom,
+        onCropChange: setCrop,
+        onZoomChange: setZoom,
+        onCropComplete: handleCropComplete,
+        width,
+        height
+      },
+      onSubmit: async () => {
+        await handleCrop();
+        closeModal();
+      }
+    })
+  }
   return (
     <div
-      className={cn("relative overflow-hidden w-full h-full border-none", className)}
+      className={cn("relative overflow-hidden w-full h-full border-none cursor-pointer", className, shape === "round" && "rounded-full")}
       style={style}
+      onClick={triggerFileSelect}
     >
-      <Cropper
-        image={imageSrc}
-        crop={crop}
-        zoom={zoom}
-        onCropComplete={handleCropComplete}
-        onCropChange={setCrop}
-        onZoomChange={setZoom}
-        cropSize={{
-          width: width,
-          height: height
-        }}
+      <img
+        src={imageSrc}
+        className={`w-full h-full ${shape === "round" ? "object-cover" : "object-contain"}`}
+        alt="Selected Image"
       />
       <div
-        className='absolute top-2 right-2 cursor-pointer bg-white/50 p-1 rounded-full hover:bg-white'
-        onClick={triggerFileSelect}
+        className='absolute top-[50%] left-[50%] cursor-pointer bg-white/50 p-1 rounded-full hover:bg-white'
+        onClick={handleCropButtonClick}
       >
-        <Pencil size={12} className='text-black' />
-      </div>
-      <div
-        className='absolute top-1/2 left-1/2 cursor-pointer bg-white/50 p-1 rounded-full hover:bg-white'
-        onClick={handleCrop}
-        onMouseDown={(e => e.preventDefault())}
-      >
-        <Check size={12} className='text-black' />
+        <Crop size={12} className='text-black' />
       </div>
     </div>
   );
@@ -235,13 +255,13 @@ const ImageContainer: React.FC<IImageContainer> = ({ className, style }) => {
  * @returns {JSX.Element} The `EmptyContainer` component that allows users to upload an image.
  */
 const EmptyContainer: React.FC<IEmptyContainer> = ({ className, style }) => {
-  const { triggerFileSelect } = useSelectImageContext(
+  const { triggerFileSelect, shape } = useSelectImageContext(
     { errorMessage: "EmptyContainer must be used within a CustomSelectImage" }
   );
   return (
     <div
       onClick={triggerFileSelect}
-      className={cn('w-full h-full flex items-center justify-center cursor-pointer border-2 border-dashed border-gray-300', className)}
+      className={cn('w-full h-full flex items-center justify-center cursor-pointer border-2 border-dashed border-gray-300', className, shape === 'round' && 'rounded-full')}
       style={style}
     >
       <ImageUp />
@@ -256,6 +276,7 @@ const EmptyContainer: React.FC<IEmptyContainer> = ({ className, style }) => {
  * 
  * @param {number} width - The width of the image container (both `ImageContainer` and `EmptyContainer`).
  * @param {number} height - The height of the image container (both `ImageContainer` and `EmptyContainer`).
+ * @param {"rect" | "round"} [shape] - Optional shape for the image container.
  * @param {(imageSrc: string) => void} [onChange] - An optional callback function to handle the updated image source after cropping.
  * @param {React.ReactNode} [children] - Optional children to render inside the `SelectImage` component. 
  * The children can be `ImageContainer` or `EmptyContainer`.
